@@ -8,7 +8,6 @@ _llpc_commit=ddb909580e9996356c3bbe23bc1b14c44987eb4c
 _xgl_commit=96d84068b622b2c3ce8cf9aa8ff597260aa5ad3f
 _pal_commit=135258ac31901e1293fea5e2f599659ee438ba1f
 _llvm_commit=b9910c8bfcccc63c07c959963fa567120d11f024
-_wsa_commit=f558403d3292039de4d17334e562bda58abfc72c
 _spvgen_commit=64013f150c2d41965a3d36fa159b55fba52b727a
 
 pkgdesc="AMD's standalone Vulkan driver"
