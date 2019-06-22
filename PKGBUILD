@@ -11,13 +11,13 @@ _llvm_commit=b9910c8bfcccc63c07c959963fa567120d11f024
 _spvgen_commit=64013f150c2d41965a3d36fa159b55fba52b727a
 
 pkgdesc="AMD's standalone Vulkan driver"
-arch=(x86_64)
+arch=('x86_64')
 url="https://github.com/GPUOpen-Drivers"
 license=('MIT')
 depends=('vulkan-icd-loader')
 provides=('vulkan-amdvlk' 'vulkan-driver')
 conflicts=('vulkan-amdvlk')
-makedepends=('cmake' 'dri2proto' 'gcc8' 'libdrm' 'libxml2' 'libxrandr' 'ninja' 'python' 'wayland' 'xorg-server-devel')
+makedepends=('cmake' 'dri2proto' 'gcc8' 'libdrm' 'libxml2' 'libxrandr' 'python' 'wayland' 'xorg-server-devel')
 
 source=(https://github.com/GPUOpen-Drivers/AMDVLK/archive/v-${pkgver}.tar.gz
         https://github.com/GPUOpen-Drivers/llpc/archive/${_llpc_commit}.tar.gz
@@ -47,7 +47,7 @@ prepare() {
   export CXX=/usr/bin/x86_64-pc-linux-gnu-g++-8
   
   #linking to needed executables... whats the proper way to do that?
-  msg "need root to link gcc8 files"
+  msg "link gcc8 files"
   sudo ln -sf /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1-8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1        
   sudo ln -sf /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1plus-8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1plus
   sudo ln -sf /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/lto1-8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/lto1
@@ -63,20 +63,20 @@ build() {
   make
   
   #remove links
+  msg "remove linked gcc8 files"
   sudo rm /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1 
   sudo rm /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1plus
   sudo rm /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/lto1
 }
 
 package() {
-  install -m755 -d "${pkgdir}"/usr/lib
-  install -m755 -d "${pkgdir}"/usr/share/vulkan/icd.d
-  install -m755 -d "${pkgdir}"/usr/share/licenses/amdvlk-git
-  install -m755 -d "${pkgdir}"/etc/amd
+  install -m755 -d ${pkgdir}/usr/lib
+  install -m755 -d ${pkgdir}/usr/share/vulkan/icd.d
+  install -m755 -d ${pkgdir}/usr/share/licenses/amdvlk-git
 
-  install xgl/builds/Release64/icd/amdvlk64.so "${pkgdir}"/usr/lib/
-  install AMDVLK/json/Redhat/amd_icd64.json "${pkgdir}"/usr/share/vulkan/icd.d/
-  install AMDVLK/LICENSE.txt "${pkgdir}"/usr/share/licenses/amdvlk-git/
+  install xgl/builds/Release64/icd/amdvlk64.so ${pkgdir}/usr/lib/
+  install AMDVLK/json/Redhat/amd_icd64.json ${pkgdir}/usr/share/vulkan/icd.d/
+  install AMDVLK/LICENSE.txt ${pkgdir}/usr/share/licenses/amdvlk-git/
 
-  sed -i "s/\/lib64/\/lib/g" "${pkgdir}"/usr/share/vulkan/icd.d/amd_icd64.json
+  sed -i "s/\/lib64/\/lib/g" ${pkgdir}/usr/share/vulkan/icd.d/amd_icd64.json
 } 
