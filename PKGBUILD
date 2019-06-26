@@ -16,7 +16,7 @@ url="https://github.com/GPUOpen-Drivers"
 license=('MIT')
 depends=('vulkan-icd-loader')
 provides=('vulkan-amdvlk' 'vulkan-driver')
-conflicts=('vulkan-amdvlk')
+conflicts=('amdvlk-git' 'amdvlk-deb' 'amdvlk-bin')
 makedepends=('cmake' 'dri2proto' 'gcc8' 'libdrm' 'libxml2' 'libxrandr' 'python' 'wayland' 'xorg-server-devel')
 
 source=(https://github.com/GPUOpen-Drivers/AMDVLK/archive/v-${pkgver}.tar.gz
@@ -40,21 +40,15 @@ prepare() {
   ln -sf ${srcdir}/llpc-${_llpc_commit} ${srcdir}/llpc
   ln -sf ${srcdir}/llvm-${_llvm_commit} ${srcdir}/llvm
   ln -sf ${srcdir}/spvgen-${_spvgen_commit} ${srcdir}/spvgen
-  
-  #export gcc8 executables because it doesn't build with gcc9 yet
-  
-  export CC=/usr/bin/x86_64-pc-linux-gnu-gcc-8.3.0
-  export CXX=/usr/bin/x86_64-pc-linux-gnu-g++-8
-  
-  #linking to needed executables... whats the proper way to do that?
-  msg "link gcc8 files"
-  sudo ln -sf /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1-8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1        
-  sudo ln -sf /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1plus-8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1plus
-  sudo ln -sf /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/lto1-8 /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/lto1
 }
 
 build() {
   cd xgl
+  
+  #export gcc8 executables because it doesn't build with gcc9 yet  
+  export CC=/usr/bin/x86_64-pc-linux-gnu-gcc-8.3.0
+  export CXX=/usr/bin/x86_64-pc-linux-gnu-g++-8
+  
   cmake -H. -Bbuilds/Release64 \
     -DCMAKE_BUILD_TYPE=Release \
     -DBUILD_WAYLAND_SUPPORT=On
