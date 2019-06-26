@@ -19,14 +19,16 @@ provides=('vulkan-amdvlk' 'vulkan-driver')
 conflicts=('amdvlk-git' 'amdvlk-deb' 'amdvlk-bin')
 makedepends=('cmake' 'dri2proto' 'gcc8' 'libdrm' 'libxml2' 'libxrandr' 'ninja' 'python' 'wayland' 'xorg-server-devel')
 
-source=(https://github.com/GPUOpen-Drivers/AMDVLK/archive/v-${pkgver}.tar.gz
+source=(amdPalSettings.cfg
+        https://github.com/GPUOpen-Drivers/AMDVLK/archive/v-${pkgver}.tar.gz
         https://github.com/GPUOpen-Drivers/llpc/archive/${_llpc_commit}.tar.gz
         https://github.com/GPUOpen-Drivers/xgl/archive/${_xgl_commit}.tar.gz
         https://github.com/GPUOpen-Drivers/pal/archive/${_pal_commit}.tar.gz
         https://github.com/GPUOpen-Drivers/llvm/archive/${_llvm_commit}.tar.gz
         https://github.com/GPUOpen-Drivers/spvgen/archive/${_spvgen_commit}.tar.gz)
   
-sha256sums=('4017d5ef9deacbbe0d1d952ce9f79242212f1ac94c39ed4daf267cb703618974'
+sha256sums=('81dd70606621713217de5a4cc2aabf6b9e34d4324b5eaaf0429e4f88c9b60b42'
+            '4017d5ef9deacbbe0d1d952ce9f79242212f1ac94c39ed4daf267cb703618974'
             '32e6f6e330a7ff82bd7840e43a81d7950878c9eae93f0e1e376c37c27426c244'
             '49f6cfd63f89db1a2cbf1bb5be882919af45443e057efb1715785e0983b3cd32'
             'dfebaf29c6dedb9c6fcbe4d02407a4267703aa7ae570d105ef146f2df455486f'
@@ -61,10 +63,12 @@ package() {
   install -m755 -d ${pkgdir}/usr/lib
   install -m755 -d ${pkgdir}/usr/share/vulkan/icd.d
   install -m755 -d ${pkgdir}/usr/share/licenses/amdvlk-git
+  install -m755 -d ${pkgdir}/etc/amd
 
   install xgl/builds/Release64/icd/amdvlk64.so ${pkgdir}/usr/lib/
   install AMDVLK/json/Redhat/amd_icd64.json ${pkgdir}/usr/share/vulkan/icd.d/
   install AMDVLK/LICENSE.txt ${pkgdir}/usr/share/licenses/amdvlk-git/
-
+  install amdPalSettings.cfg ${pkgdir}/etc/amd/
+  
   sed -i "s/\/lib64/\/lib/g" ${pkgdir}/usr/share/vulkan/icd.d/amd_icd64.json
 } 
