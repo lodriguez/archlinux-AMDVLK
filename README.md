@@ -14,3 +14,8 @@ The AMD Open Source Driver for Vulkan is designed to support a wide range of AMD
 - AMD FirePro™ Workstation Wx000/Wx100/Wx300 Series
 - Radeon™ Pro WX x100 Series
 - Radeon™ Pro 400/500 Series
+
+To use AMDVLK as default vulkan Driver you have to 
+```
+export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/amd_icd64.json" 
+```
