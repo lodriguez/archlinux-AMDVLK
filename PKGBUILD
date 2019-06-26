@@ -13,14 +13,14 @@ _spirvtools_commit=ce19e217bc82e1dbd631b6a555b1874432f3a05f
 _spirvheaders_commit=c4f8f65792d4bf2657ca751904c511bbcf2ac77b
 _glslang_commit=4e6b9ea32900b7bae6728eb8167657cdae7b16dc
 
-pkgdesc="AMDVLK - AMD Open Source Driver for Vulkan®"
+pkgdesc='AMDVLK - AMD Open Source Driver for Vulkan®'
 arch=('x86_64')
 url='https://github.com/GPUOpen-Drivers'
 license=('MIT')
 depends=('vulkan-icd-loader')
 provides=('vulkan-amdvlk' 'vulkan-driver')
 conflicts=('amdvlk-git' 'amdvlk-deb' 'amdvlk-bin')
-makedepends=('cmake' 'dri2proto' 'gcc8' 'libdrm' 'libxml2' 'libxrandr' 'ninja' 'python' 'wayland' 'xorg-server-devel')
+makedepends=('cmake' 'dri2proto' 'gcc' 'libdrm' 'libxml2' 'libxrandr' 'ninja' 'python' 'wayland' 'xorg-server-devel')
 
 source=(amdPalSettings.cfg
         https://github.com/GPUOpen-Drivers/AMDVLK/archive/v-${pkgver}.tar.gz
@@ -54,14 +54,16 @@ prepare() {
   ln -sf ${srcdir}/SPIRV-Tools-${_spirvtools_commit} ${srcdir}/spvgen/external/SPIRV-tools
   ln -sf ${srcdir}/SPIRV-Headers-${_spirvheaders_commit} ${srcdir}/spvgen/external/SPIRV-tools/external/SPIRV-Headers
   ln -sf ${srcdir}/glslang-${_glslang_commit} ${srcdir}/spvgen/external/glslang
+
+  #replace -Werror with -Wno-error=unused-variable to build with gcc9 
+  for i in xgl/icd/CMakeLists.txt llpc/CMakeLists.txt llpc/imported/metrohash/CMakeLists.txt llvm/utils/benchmark/CMakeLists.txt pal/src/core/imported/addrlib/CMakeLists.txt pal/src/core/imported/vam/CMakeLists.txt pal/shared/gpuopen/cmake/AMD.cmake
+  do
+    sed -i "s/-Werror/-Wno-error=unused-variable/g" "$srcdir"/$i
+  done
 }
 
 build() {
   cd xgl
-  
-  #export gcc8 executables because it doesn't build with gcc9 yet
-  export CC=/usr/bin/gcc-8
-  export CXX=/usr/bin/g++-8
 
   cmake -H. -Bbuilds/Release64 \
     -DCMAKE_BUILD_TYPE=Release \
@@ -69,7 +71,7 @@ build() {
     -G Ninja
     
   msg "build amdvlk64.so"
-  #ninja -C builds/Release64
+  ninja -C builds/Release64
   
   msg "build spvgen.so"
   ninja -C builds/Release64 spvgen
@@ -78,13 +80,13 @@ build() {
 package() {
   install -m755 -d ${pkgdir}/usr/lib
   install -m755 -d ${pkgdir}/usr/share/vulkan/icd.d
-  install -m755 -d ${pkgdir}/usr/share/licenses/amdvlk-git
+  install -m755 -d ${pkgdir}/usr/share/licenses/${pkgname}
   install -m755 -d ${pkgdir}/etc/amd
 
   install xgl/builds/Release64/icd/amdvlk64.so ${pkgdir}/usr/lib/
   install xgl/builds/Release64/spvgen/spvgen.so ${pkgdir}/usr/lib/
   install AMDVLK/json/Redhat/amd_icd64.json ${pkgdir}/usr/share/vulkan/icd.d/
-  install AMDVLK/LICENSE.txt ${pkgdir}/usr/share/licenses/amdvlk-git/
+  install AMDVLK/LICENSE.txt ${pkgdir}/usr/share/licenses/${pkgname}/
   install amdPalSettings.cfg ${pkgdir}/etc/amd/
 
   sed -i "s/\/lib64/\/lib/g" ${pkgdir}/usr/share/vulkan/icd.d/amd_icd64.json
