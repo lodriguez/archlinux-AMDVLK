@@ -55,12 +55,6 @@ build() {
     -G Ninja
 
   ninja -C builds/Release64
-  
-  #remove links
-  msg "remove linked gcc8 files"
-  sudo rm /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1 
-  sudo rm /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/cc1plus
-  sudo rm /usr/lib/gcc/x86_64-pc-linux-gnu/8.3.0/lto1
 }
 
 package() {
