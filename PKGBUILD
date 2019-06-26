@@ -48,8 +48,8 @@ build() {
   cd xgl
   
   #export gcc8 executables because it doesn't build with gcc9 yet  
-  export CC=/usr/bin/x86_64-pc-linux-gnu-gcc-8.3.0
-  export CXX=/usr/bin/x86_64-pc-linux-gnu-g++-8
+  export CC=/usr/bin/gcc-8
+  export CXX=/usr/bin/g++-8
   
   cmake -H. -Bbuilds/Release64 \
     -DCMAKE_BUILD_TYPE=Release \
