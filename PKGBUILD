@@ -17,7 +17,7 @@ license=('MIT')
 depends=('vulkan-icd-loader')
 provides=('vulkan-amdvlk' 'vulkan-driver')
 conflicts=('amdvlk-git' 'amdvlk-deb' 'amdvlk-bin')
-makedepends=('cmake' 'dri2proto' 'gcc8' 'libdrm' 'libxml2' 'libxrandr' 'python' 'wayland' 'xorg-server-devel')
+makedepends=('cmake' 'dri2proto' 'gcc8' 'libdrm' 'libxml2' 'libxrandr' 'ninja' 'python' 'wayland' 'xorg-server-devel')
 
 source=(https://github.com/GPUOpen-Drivers/AMDVLK/archive/v-${pkgver}.tar.gz
         https://github.com/GPUOpen-Drivers/llpc/archive/${_llpc_commit}.tar.gz
@@ -51,10 +51,10 @@ build() {
   
   cmake -H. -Bbuilds/Release64 \
     -DCMAKE_BUILD_TYPE=Release \
-    -DBUILD_WAYLAND_SUPPORT=On
+    -DBUILD_WAYLAND_SUPPORT=On \
+    -G Ninja
 
-  cd builds/Release64
-  make
+  ninja -C builds/Release64
   
   #remove links
   msg "remove linked gcc8 files"
