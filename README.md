@@ -1,5 +1,5 @@
-# PKGBUILD-amdvlk
-PKGBUILD to build stable AMDVLK-release from source
+# archlinux-AMDVLK
+PKGBUILDs to build stable AMDVLK-releases from source
 
 The AMD Open Source Driver for Vulkan® is an open-source Vulkan driver for AMD Radeon™ graphics adapters on Linux®.
 
@@ -18,4 +18,9 @@ The AMD Open Source Driver for Vulkan is designed to support a wide range of AMD
 To use AMDVLK as default vulkan Driver you have to 
 ```
 export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/amd_icd64.json" 
+```
+
+To use lib32-AMDVLK as default vulkan Driver you have to
+```
+export VK_ICD_FILENAMES="/usr/share/vulkan/icd.d/amd_icd32.json" 
 ```
