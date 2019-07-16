@@ -11,6 +11,7 @@ The AMD Open Source Driver for Vulkan is designed to support a wide range of AMD
 - Radeon™ RX 400/500 Series
 - Radeon™ M200/M300/M400 Series
 - Radeon™ RX Vega Series
+- Radeon&trade; RX 5700 Series
 - AMD FirePro™ Workstation Wx000/Wx100/Wx300 Series
 - Radeon™ Pro WX x100 Series
 - Radeon™ Pro 400/500 Series
