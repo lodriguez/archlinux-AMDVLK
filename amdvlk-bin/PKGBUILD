@@ -1,7 +1,7 @@
 # Maintainer: lod <aur@cyber-anlage.de>
 
 pkgname=amdvlk-bin
-pkgver=2019.Q4.2
+pkgver=2019.Q4.3
 pkgrel=1
 pkgdesc='Open-source Vulkan driver for AMD Radeon™ graphics adapters (Stable DEB Release)'
 arch=('x86_64')
