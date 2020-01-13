@@ -2,7 +2,7 @@
 # Contributor: Laurent Carlier <lordheavym@gmail.com>
 
 pkgname=amdvlk-git
-pkgver=r56.fce057b
+pkgver=v.2019.Q4.5.r56.fce057b
 pkgrel=1
 pkgdesc="Open-source Vulkan driver for AMD Radeon™ graphics adapters (dev-branch)"
 arch=(x86_64)
@@ -45,7 +45,9 @@ prepare() {
 
 pkgver() {
   cd AMDVLK
-  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  AMDVLK_RELEASE=$(git tag | tail -1 | sed 's/\([^-]*-\)g/r\1/;s/-/./g')
+  AMDVLK_GIT=$(printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)")
+  echo $AMDVLK_RELEASE.$AMDVLK_GIT
 }
 
 build() {
