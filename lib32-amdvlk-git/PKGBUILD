@@ -1,0 +1,76 @@
+# Maintainer: lod <aur@cyber-anlage.de>
+# Contributor: Laurent Carlier <lordheavym@gmail.com>
+
+pkgname=lib32-amdvlk-git
+pkgver=r56.fce057b
+pkgrel=1
+pkgdesc="Open-source Vulkan driver for AMD Radeon™ graphics adapters (dev-branch)"
+arch=(x86_64)
+url="https://github.com/GPUOpen-Drivers"
+license=('MIT')
+provides=('lib32-vulkan-driver')
+conflicts=('lib32-amdvlk')
+makedepends=('perl-xml-xpath' 'python' 'lib32-wayland' 'lib32-libxrandr' 'xorg-server-devel' 'cmake' 'ninja' 'git')
+source=("$pkgname::git+https://github.com/GPUOpen-Drivers/AMDVLK.git#branch=dev")
+sha256sums=('SKIP')
+
+prepare() {
+  local nrepos path name revision
+  
+  nrepos=$(xpath -q -e //project $pkgname/default.xml | wc -l)
+  
+  while (($nrepos>0))
+  do
+    path=$(xpath -q -e //project[$nrepos]/@path $pkgname/default.xml | sed 's/ path="drivers\/\(.*\)"/\1/g')
+    name=$(xpath -q -e //project[$nrepos]/@name $pkgname/default.xml | sed 's/ name="\(.*\)"/\1/g')
+    revision=$(xpath -q -e //project[$nrepos]/@revision $pkgname/default.xml | sed 's/ revision="\(.*\)"/\1/g')
+    if [ ! -d $path/.git ]
+      then
+      git clone https://github.com/GPUOpen-Drivers/$name $path
+      pushd $path
+        git checkout $revision
+      popd
+    else
+      pushd $path
+        git pull
+      popd
+    fi
+    (( nrepos-- ))
+  done
+  
+  # fix build with gcc9 
+  sed -i "s/-Werror//g" ${srcdir}/pal/shared/gpuopen/cmake/AMD.cmake
+}
+
+pkgver() {
+  cd AMDVLK
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+
+  cd ${srcdir}/xgl
+  cmake -H. -Bbuilds/Release \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_FLAGS=-m32 \
+    -DCMAKE_CXX_FLAGS=-m32 \
+    -DLLVM_TARGET_ARCH:STRING=i686 \
+    -DLLVM_DEFAULT_TARGET_TRIPLE="i686-pc-linux-gnu" \
+    -DBUILD_WAYLAND_SUPPORT=On \
+    -G Ninja
+    
+  ninja -C builds/Release
+}
+
+package() {
+  install -m755 -d ${pkgdir}/usr/lib32
+  install -m755 -d ${pkgdir}/usr/share/vulkan/icd.d
+  install -m755 -d ${pkgdir}/usr/share/licenses/${pkgname}
+
+  install xgl/builds/Release/icd/amdvlk32.so ${pkgdir}/usr/lib32/
+  install AMDVLK/json/Redhat/amd_icd32.json ${pkgdir}/usr/share/vulkan/icd.d/
+  install AMDVLK/LICENSE.txt ${pkgdir}/usr/share/licenses/${pkgname}/
+  
+  sed -i "s/\/lib/\/lib32/g" ${pkgdir}/usr/share/vulkan/icd.d/amd_icd32.json
+} 
